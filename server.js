@@ -2,7 +2,6 @@ const express = require('express')
 const connectDB = require('./config/db')
 const user = require('./models/User.model')
 const app = express()
-
 app.use(express.json())
 
 // Mongodbga ulanish
@@ -14,13 +13,17 @@ app.get('/signup', async (req, res) => {
     res.json(users)
 })
 
-
 // mongodb ga post so'rovi user signub
 app.post('/signup', async (req, res) => {
     
     try {
         const newUser = req.body
-        const result = await user.create(newUser)
+        const userFullData = {
+            ...newUser,
+            name: '',
+            lastName: '',
+        }
+        const result = await user.create(userFullData)
         res.send(result)
     } catch(error) {
         console.error('Ma\'lumotni saqlashda xato:', error);
