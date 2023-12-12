@@ -1,9 +1,12 @@
 const { Router } = require('express')
 const router = Router()
 
-const { authPost } = require('../controllers/authController')
+const { loginUser, postUser } = require('../controllers/authController')
 
+// Foydalanuvchi tizimga kiritish
+router.post('/login', loginUser)
 
-router.post('/login', authPost)
+// Foydalanuvchi qo'shish
+router.post('/sign', postUser)
 
 module.exports = router

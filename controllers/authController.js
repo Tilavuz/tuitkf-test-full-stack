@@ -3,7 +3,15 @@ const bcrypt = require('bcrypt')
 const jwt = require('jsonwebtoken')
 
 
-const authPost = async (req, res) => {
+// Jwt token generate
+const generateJwtToken = (id) => {
+    console.log(id);
+    const token = jwt.sign({id}, '72tilavuz51', {expiresIn: '7d'})
+    return token
+}
+
+
+const loginUser = async (req, res) => {
 
     try {
         const auth = await User.findOne({email: req.body.email})
@@ -27,4 +35,24 @@ const authPost = async (req, res) => {
     }
 }
 
-module.exports = { authPost }
+// Foydalanuvchi qo'shish
+const postUser = async (req, res) => {
+    try {
+        const user = new User(req.body)
+        const salt = await bcrypt.genSalt()
+        user.password = await bcrypt.hash(user.password, salt)
+        await user.save()
+
+        const token = generateJwtToken(user._id)
+        
+        console.log(token);
+        res.header('x-auth-token', token).status(201).json({
+            message: 'Foydalanuvchi ro\'yhatga qo\'shildi',
+        })
+    }catch(err) {
+        res.status(400).json( { message: 'Foydalanuvchi ro\'yhatga olinmadi yoki bazada mavjut' })
+    }
+}
+
+
+module.exports = { loginUser, postUser }
